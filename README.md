@@ -1,50 +1,68 @@
-## ___Power Query and M Formula Language - The Cheat Sheet___
+## ___M Formula Language in Power Query - The Cheat Sheet___
 ---
 #### By&nbsp;___Martin&nbsp;Czerwinski___ &nbsp;March&nbsp;2020&nbsp;®&nbsp;[__CMQ__&nbsp;Nordic&nbsp;AB](www.cmq.se "www.cmq.se (Martin Czerwinski @ CMQ Nordic AB)")
+
+---
+What is the M Formula language? What is the syntax and structure of M and how to work with with it in Power Query? This is an compact tutorial, or a cheat sheet to look up things in - that will give you answer to all that questions and more! Please bookmark this page and __share it__. Feel free to [reach out to](www.cmq.se "Contact us!") us with questions, comments or requests. You can also hire us for assignments.
+
+Prerequisites: If you have never used Data tab in Excel, or do not have any at all skills in any programing languages - then this article could be hard for you to follow. We first get familiar with __THIS__ and __THIS__.
+
 ---
 
 #### __TABLE OF CONTENT__
- ► __Power Query M Language__
-  - [__M Language__](#m-language "What is M and what is it used for?") 
-    - [Variables](#Variables "Switch between shells that power the terminal")
-    - [Shortcuts](#useful-vscode-shortcuts "Our most frequently used shortcuts")
-    - [Extensions](#useful-VSCode-extensions "Useful VSCode Extensions")
-    - [EMMET Snippets](#useful-emmet-snippets "Useful EMMET Snippets")
-  - [__VSCode__](#vscode "What is VSCode and what is build in?") 
+ ► __M in Power Query__
+  - [__What is M and why in Power Query?__](#what-is-M-and-why-power-query? "What is M and what is it used in Power Query?")
+  - [__M syntax & some Power Query basics__](#m-syntax-with-some-power-query-basics "[M syntax with some Power Query basics") 
+    - [Power Query Editor](#power-query-editor "Switch between shells that power the terminal") | [Creating my first query](#creating-my-first-query "Our most frequently used shortcuts") | [Shortcuts](#useful-vscode-shortcuts "Our most frequently used shortcuts") | [Shortcuts](#useful-vscode-shortcuts "Our most frequently used shortcuts")
+
+
+
+ ► __Power Query__
+ - [__What is Power Query?__](#what-is-power-query? "What is Power Query?") 
+ - [__Power Query Editor__](#power-query-editor "Power Query Editor") 
+   - [Excel](#m-language "Power Query Editor in Excel") 
+   - [Power BI](#m-language "Power Query Editor in Power BI") 
+   - [Other tools](#m-language "Power Query Editor in other tools") 
+- [__Clickable UI functions__](#power-query-editor "Clickable UI functions Query Editor") 
+   - [Other tools](#m-language "Power Query Editor in other tools") | [Other tools](#m-language "Power Query Editor in other tools") | [Other tools](#m-language "Power Query Editor in other tools") | [Other tools](#m-language "Power Query Editor in other tools")
+
 
 <br>
 
 ---
-If you have never use Excel or do not have any skills in any programing langueage we recoomed to go though the basics here and here in order to...
-
 
 <section>
 
-<article>
-
-## [__Power Query and M Language__]()
+## [__What is M and why Power Query?__]()
 <p align=right><a align=right href="#table-of-content">↩ Back To Top</a></p>
 
-### This is bla bla bla
+ "M" stands for "Mashup" and is a script language created by Microsoft for usage in their [Power Query tools](#what-is-power-query?). It is a query language designed to build queries that mashup data. It is similar to [F-Sharp](https://en.wikipedia.org/wiki/F_Sharp_(programming_language)) language. What is data "mashup"? This term is used to describe the action of combining and modifying collected data to create a personalized high-value product for distribution or personal consumption. The core capability of Power Query is to mashup data and its M scripting Language is used for this purpose.
 
-What is Power Query and M and what is it used for?
+We instantly fell in love with Power Query after seeing how it can easily import and transform data in ways Excel finds difficult, and how it can automate repetitive workflows!
 
-instantly fell in love with Power Query after seeing how it can easily transform data in ways Excel finds difficult, and how it can automate repetitive workflows.
+You can do a lot in Power Query Editor by clicking and drag-and-dropping in the UI, without writing any single line of code, but sometimes you might need to dig and modify the automated M code or write new functionalities. Therefore we recommend to understand at least the basics of the syntax of this language. It also makes it possible to create more complicated actions than those limited to click-and-drag in Power Query Editor UI.
 
-[Power Query M](https://docs.microsoft.com/en-us/powerquery-m/) language is a ...  A core capability of Power Query is to filter and combine, that is, to mash-up data from one or more of a rich collection of supported data sources. Any such data mashup is expressed using the Power Query M Formula Language. It's a functional, case sensitive language similar to F#. Tools like Microsoft Excel’s Get & Transform Data and Microsoft Power BI provide point-and-click interfaces allowing you to build data transformation sequences.
-
-Before starting to click and drag-and-drop in Power Query Editor we recommend to understand at least the basics of the syntax and language structure of PowerQuery M language.
-
-</article>
 <br>
 <article>
 
-### __[Basics in Power Query and M syntax]()__
+### __[M syntax with some Power Query basics]()__
 <p align=right><a align=right href="#table-of-content">↩ Back To Top</a></p>
 
-Following are basic Power Query M expressions that we recommended to get familiar with in order to understand the rest of this tutorial.
+Let's din into some few areas that are core of Power Query and M each followed by an descriptive example:
 
- - __Query Editor:__ Editor for M queries and graphical tool viewing clickable list of steps. Available for example in Excel [Power Query Editor](https://support.office.com/en-us/article/getting-started-with-power-query-7104fbee-9e62-4cb9-a02e-5bfb1a6c536a) or in [Power BI](https://powerbi.microsoft.com/en-us/what-is-power-bi/).
+
+
+|<a id="power-query-editor">Power Query Editor</a>|
+|:---|
+|Power Query Editor is a graphical M script editor build-in in [Excel](https://support.office.com/en-us/article/getting-started-with-power-query-7104fbee-9e62-4cb9-a02e-5bfb1a6c536a "Getting Started with Power Query in Excel") and [Power BI](https://powerbi.microsoft.com/en-us/blog/getting-started-with-power-query-part-i/ "Getting Started with Power Query in Power BI"). It's used for working with sets of data, creating M queries and uploading the results to external sources (i.e. Excel sheets). Its graphical interface presents M code as clickable list of steps. It is designed and handy for persons without any coding experience. In Excel the Power Query Editor can be launched by clicking on a query or connections in Data tab -> Queries & Connections. It can also be started from  Build in the editor there is Advanced editor aimed to manuals writing and editing the M code.  |
+
+	PIC of POWER QUERY EDITOR  &  PIC OF Advanced editor
+
+|<a id="creating-my-first-query">Creating my first query</a>|
+|:---|
+| Text  |
+
+ - __Creating my first query:__ TODO
 
 - __let / in:__
   
@@ -76,14 +94,14 @@ let
 	A = 10,
 	B = 20
 in
-	A*B
+	A * B
 ```
 same as
 ```javascript
 let
 	A = 10,
 	B = 20,
-	Result = A*B
+	Result = A * B
 in 	
 	Result
 ```				  
@@ -141,7 +159,7 @@ __seed__ - Start value for the first loop or iteration. And it is our empty `lis
 
 __accumulator__ - This parameter is a function that we must design, in other languages so called "callback function". It is called for each iteration. By definition it has two required input parameters. First parameter, in documentation called "state", is a value from the previous iteration. But.. you think, first time callback function is called, there is not previous value. Yes, and here the __seed__ value, our start value, comes to use. In our case we provided empty list as initial value. Second time callback function is called stback function can beate parameter have changed and in our case is a list with one element. Third run it's a list with 2 element, and so on. The second parameter in the callback function __current__ is the element of the list, in our case "index", and is 0 first iteration, 1 second iteration, 2 third and so on.
 
-__Note!_ [List.Accumulate()](https://docs.microsoft.com/en-us/powerquery-m/list-accumulate "Documentation for the function") is also of type "any", meaning that can return any structured value like tables, lists or records as a final result. It is not limited to this simple types we used in the example. For example index list can have more complicated elements that will be passes on to callback function for iteration. The result from the callback function can be tables, not limited to lists as in our example. List.Accumulate can be used to all kind of looping and iterations by the technique described in the example!
+__Note!__ [__List.Accumulate()__](https://docs.microsoft.com/en-us/powerquery-m/list-accumulate "Documentation for the function") and its 2nd parameter "seed" is of type "any", meaning that this function is not limited to lists-objects but can return and forward to callback function any structured value like tables, lists or records.  For example "index" list can have other types of elements that will subsequently feed the callback function during iteration. The result from the callback function can be tables, not limited to initial empty list, as in our example. Function List.Accumulate is very powerful as looping an iterations are big part of programing logic.
 
 
 
@@ -199,17 +217,14 @@ in
 ```
 
 
+## [__What is Power Query__]()
+<p align=right><a align=right href="#table-of-content">↩ Back To Top</a></p>
+'
+Power Query is a technology created by Microsoft and its core capability are to importing, modifying data from one or more data sources. Power Query is part of Excel and Power BI tools. It is a great tool when it come to collecting, modifying and analyzing big amounts of data.
+
+what data can we import/collect with Power Query?
+Power query can connect to tables and ranges in same or other Excel sheets and load data from there. It can connect to databases with tables, azure, internet pages, facebook and more. Read more about importing data from external sources - [Excel](https://support.office.com/en-us/article/Import-data-from-external-data-sources-Power-Query-be4330b3-5356-486c-a168-b68e9e616f5a) or  [Power BI](https://docs.microsoft.com/en-us/power-bi/service-get-data).
 
 
 
 
-<article>
-
-</article>
-
-
-<article>
-
-</article>
-
-</section>
