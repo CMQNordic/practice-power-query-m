@@ -13,7 +13,7 @@ Prerequisites: If you have never used Data tab in Excel, or do not have any at a
  ► __M in Power Query__
   - [__What is M and why in Power Query?__](#what-is-M-and-why-power-query? "What is M and what is it used in Power Query?")
   - [__M syntax & some Power Query basics__](#m-syntax-with-some-power-query-basics "[M syntax with some Power Query basics") 
-    - [Power Query Editor](#power-query-editor "Switch between shells that power the terminal") | [Creating my first query](#creating-my-first-query "Our most frequently used shortcuts") | [Shortcuts](#useful-vscode-shortcuts "Our most frequently used shortcuts") | [Shortcuts](#useful-vscode-shortcuts "Our most frequently used shortcuts")
+    - [Query](#power-query-e) |  [Power Query Editor](#power-query-editor "Our most frequently used shortcuts") | [let & in](#let-in) | [Steps](#steps-e) | [Tables](#tables-e) | [Lists](#lists-e) | [Records](#records-e)
 
 
 
@@ -36,7 +36,7 @@ Prerequisites: If you have never used Data tab in Excel, or do not have any at a
 ## [__What is M and why Power Query?__]()
 <p align=right><a align=right href="#table-of-content">↩ Back To Top</a></p>
 
- "M" stands for "Mashup" and is a script language created by Microsoft for usage in their [Power Query tools](#what-is-power-query?). It is a query language designed to build queries that mashup data. It is similar to [F-Sharp](https://en.wikipedia.org/wiki/F_Sharp_(programming_language)) language. What is data "mashup"? This term is used to describe the action of combining and modifying collected data to create a personalized high-value product for distribution or personal consumption. The core capability of Power Query is to mashup data and its M scripting Language is used for this purpose.
+ "M" stands for "mash up" and is a script language created by Microsoft for usage in their [Power Query tools](#what-is-power-query?) designed to build queries that mashup data. It is similar to [F-Sharp](https://en.wikipedia.org/wiki/F_Sharp_(programming_language)) language. What is data "mashup"? This term is used to describe the action of combining and modifying collected data to create a personalized high-value product for distribution or personal consumption. The core capability of Power Query is to mashup data and its M scripting Language is used for this purpose.
 
 We instantly fell in love with Power Query after seeing how it can easily import and transform data in ways Excel finds difficult, and how it can automate repetitive workflows!
 
@@ -50,30 +50,63 @@ You can do a lot in Power Query Editor by clicking and drag-and-dropping in the 
 
 Let's din into some few areas that are core of Power Query and M each followed by an descriptive example:
 
-|<a id="M query">Query</a>|
+|<a id="power-query-e">Query</a>|
 |:---|
-| M query is a script written in M language and often automatically created (by Excel or Power BI) when you import data into your data model or power query. In Excel it is done from "Data" tab from options present in "Get & Transform data" part to the left of the menu. Most basic to import is a table or range in current Excel document (`Get Data -> From Other Sources -> From Table/Range and follow the wizard`). Then Power Query automatically launches and creates an M query loading the data to a variable called `source`. You can later on by opening the Power Query Editor work on the query to modify the loaded set of data.  |
+| M query is a script written in M language and often automatically created (by Excel or Power BI) when you import data into your data model or power query. In Excel it is done from "Data" tab from options present in "Get & Transform data" part to the left of the menu. Most basic to import is a table or range in current Excel document (`Get Data -> From Other Sources -> From Table/Range` and follow the wizard). Then Power Query automatically launches and creates an M query loading the data to a variable called `source`. You can later on by opening the Power Query Editor work on the query to modify the loaded set of data.  |
 
 |<a id="power-query-editor">Power Query Editor</a>|
 |:---|
 |Power Query Editor is a graphical M script editor build-in in [Excel](https://support.office.com/en-us/article/getting-started-with-power-query-7104fbee-9e62-4cb9-a02e-5bfb1a6c536a "Getting Started with Power Query in Excel") and [Power BI](https://powerbi.microsoft.com/en-us/blog/getting-started-with-power-query-part-i/ "Getting Started with Power Query in Power BI"). It's used for working on M queries, when working with sets of data, and uploading the results to external sources i.e. Excel sheets. Its graphical interface presents M code as clickable list of steps. It is designed to be used by persons without any coding experience. In Excel, the Power Query Editor can be launched by clicking on existing query in list of queries, launched from `Data tab -> Queries & Connections`.  |
 
 
-- __let / in:__
+|<a id="let-in">let & in</a>|
+|:---|
+|The `let` expression encapsulates a set of values to be computed, assigned names, and then used in a subsequent expression that follows the `in` statement.  The “single variable" following `in` is most common and helps graphical query editors when debugging ans selecting single steps. The purpose of `let` expression is to allow defining variables. A `let` expression is a block that produces a value and can be used wherever values are expected. This means we can assign them to variables, nest them inside other let expressions, and use them to produce values for function call arguments. __Example:__ let & in |
+
+_Definition of 2 variables and returning its product in a simple query._ 
+```javascript
+let			
+	A = 10,
+	B = 20
+in
+	A * B
+```
+same as
+```javascript
+let
+	A = 10,
+	B = 20,
+	Result = A * B
+in 	
+	Result
+```				  
+Value `200` is returned in both cases.
   
- - __Steps:__ Code rows in a query separated by `,`. Each steps represents a variable assignment inside an `let` expression. The ability to change the current step (defined after `in`) makes it easy to debug and view the produced value of a step. 
 
-- __[Table](https://ssbi-blog.de/blog/technical-topics-english/tables-in-power-query-how-when-and-why/):__ Language M and Power Queries are design to work with large data sets usually loaded and represented as tables i.e. Excel sheets with its columns and rows. Tables are often the final result of a query and are subsequently loaded into the data model in Excel or Power BI. Tables mostly contain columns and rows, but they can be empty which looks like this: `#table({},{})`. More about this important topic later on.
+|<a id="steps-e">Steps</a>|
+|:---|
+|Code rows in a query separated by `,`. Each steps represents a variable assignment inside an `let` expression. The ability to change the current step (defined after `in`) makes it easy to debug and view the produced value of a step. <br><br>|
 
-- __[List](https://ssbi-blog.de/blog/technical-topics-english/lists-in-power-query-how-when-and-why/):__ Can be described like „an ordered sequence of values“ or as a „row of a table“ and is defined with opening and closing curly brackets. An example of a very simple  list with is `MyList ={"Anna", 24, "New York"}`. When accessing values `MyList{0}` returns "Anna" and `MyList{1}` returns 24. For index of last `List.Count(MyList)-1`. M supports infinitely large lists. Many functions in M that return lists as return values. For these reasons it is necessary to know how to deal with them in order to use the M language safely. Empty list `{}` is the simplest of all lists. `=` and `<>` make it possible to compare lists, while `&` combines lists. More about this later on.
+|<a id="tables-e">Tables</a>|
+|:---|
+|Language M and Power Queries are design to work with large data sets usually loaded and represented as [tables](https://ssbi-blog.de/blog/technical-topics-english/tables-in-power-query-how-when-and-why/) i.e. Excel sheets with its columns and rows. Tables are often the final result of a query and are subsequently loaded into the data model in Excel or Power BI. Tables mostly contain columns and rows, but they can be empty which looks like this: `#table({},{})`. More about this important topic later on.  <br><br>|
 
-- __[Record](https://ssbi-blog.de/blog/technical-topics-english/records-in-power-query-how-when-and-why/):__  Can be described as „a set of fields“. A field is a name/value pair where the name is a text value that is unique within the field’s record. An example of a very simple  record is `[A=1, B=2]`. Records can be empty, which looks like this `[]`. It's rare for a record to be loaded into the data model in Excel or Power BI, but if done it behaves like a table.
-  
-- __each and \_\_ :__ `Each` is useful when combined with the lookup operator 
+|<a id="lists-e">Lists</a>|
+|:---|
+|[Lists](https://ssbi-blog.de/blog/technical-topics-english/lists-in-power-query-how-when-and-why/) be described like „an ordered sequence of values“ or as a „row of a table“ and is defined with opening and closing curly brackets. An example of a very simple list with is `MyList ={"Anna", 24, "New York"}`. When accessing values `MyList{0}` returns "Anna" and `MyList{1}` returns 24. For index of last `List.Count(MyList)-1`. M supports infinitely large lists. Many functions in M that return lists as return values. For these reasons it is necessary to know how to deal with them in order to use the M language safely. Empty list `{}` is the simplest of all lists. `=` and `<>` make it possible to compare lists, while `&` combines lists. More about this later on.  <br><br>|
 
-- __Functions__: Can be Assigned to a variable and/or renamed. Renamed like variable_X = Function(a,b), then you can call variable_X(a,b) instead of functionX(a,b). Can be Used as a parameter to another function.we need to distinguish between calling a function (using it in our code) and referring to it function vs function().he syntax to create a function is:
-function_name = (variable) => let body of function in result. The body of the function is like any other query that returns a value.
-- __[Iterations](https://www.data-insights.de/part-3-for-next-loop-using-list-accumulate-in-m-for-power-query/):__ 
+|<a id="records-e">Records</a>|
+|:---|
+|[Records]((https://ssbi-blog.de/blog/technical-topics-english/records-in-power-query-how-when-and-why/) be described as „a set of fields“. A field is a name/value pair where the name is a text value that is unique within the field’s record. An example of a very simple  record is `[A=1, B=2]`. Records can be empty, which looks like this `[]`. It's rare for a record to be loaded into the data model in Excel or Power BI, but if done it behaves like a table.  <br><br>|
+
+|<a id="functions-e">Functions</a>|
+|:---|
+|Functions can be Assigned to a variable and/or renamed. Renamed like variable_X = Function(a,b), then you can call variable_X(a,b) instead of functionX(a,b). Can be Used as a parameter to another function.we need to distinguish between calling a function (using it in our code) and referring to it function vs function().he syntax to create a function is: <br> function_name = (variable) => let body of function in result. The body of the function is like any other query that returns a value.  <br><br>|
+
+
+|<a id="each-e">each & "_"</a>|
+|:---|
+|`Each` is useful when combined with the lookup operator  <br><br>|
 
 
 |<a id="looping-and-iterations">Looping & Iterations</a>|
@@ -174,25 +207,7 @@ _Finally combining the both M techniques above -auto-create a list to later iter
 
 Expression `let` lets us define executable expressions whose results are assigned to variables (steps). Those expressions are can be used to produce a final value that can be returned by `in` expression defined the end of the query.
 
-Example: <br>
-__let / in__ and definition of 2 variables and returning its product in a simple query.  
-```javascript
-let			
-	A = 10,
-	B = 20
-in
-	A * B
-```
-same as
-```javascript
-let
-	A = 10,
-	B = 20,
-	Result = A * B
-in 	
-	Result
-```				  
-Value `200` is returned in both cases.
+
 
 <br>
 
