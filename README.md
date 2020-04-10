@@ -50,19 +50,14 @@ You can do a lot in Power Query Editor by clicking and drag-and-dropping in the 
 
 Let's din into some few areas that are core of Power Query and M each followed by an descriptive example:
 
-
+|<a id="M query">Query</a>|
+|:---|
+| M query is a script written in M language and often automatically created (by Excel or Power BI) when you import data into your data model or power query. In Excel it is done from "Data" tab from options present in "Get & Transform data" part to the left of the menu. Most basic to import is a table or range in current Excel document (`Get Data -> From Other Sources -> From Table/Range and follow the wizard`). Then Power Query automatically launches and creates an M query loading the data to a variable called `source`. You can later on by opening the Power Query Editor work on the query to modify the loaded set of data.  |
 
 |<a id="power-query-editor">Power Query Editor</a>|
 |:---|
-|Power Query Editor is a graphical M script editor build-in in [Excel](https://support.office.com/en-us/article/getting-started-with-power-query-7104fbee-9e62-4cb9-a02e-5bfb1a6c536a "Getting Started with Power Query in Excel") and [Power BI](https://powerbi.microsoft.com/en-us/blog/getting-started-with-power-query-part-i/ "Getting Started with Power Query in Power BI"). It's used for working with sets of data, creating M queries and uploading the results to external sources (i.e. Excel sheets). Its graphical interface presents M code as clickable list of steps. It is designed and handy for persons without any coding experience. In Excel the Power Query Editor can be launched by clicking on a query or connections in Data tab -> Queries & Connections. It can also be started from  Build in the editor there is Advanced editor aimed to manuals writing and editing the M code.  |
+|Power Query Editor is a graphical M script editor build-in in [Excel](https://support.office.com/en-us/article/getting-started-with-power-query-7104fbee-9e62-4cb9-a02e-5bfb1a6c536a "Getting Started with Power Query in Excel") and [Power BI](https://powerbi.microsoft.com/en-us/blog/getting-started-with-power-query-part-i/ "Getting Started with Power Query in Power BI"). It's used for working on M queries, when working with sets of data, and uploading the results to external sources i.e. Excel sheets. Its graphical interface presents M code as clickable list of steps. It is designed to be used by persons without any coding experience. In Excel, the Power Query Editor can be launched by clicking on existing query in list of queries, launched from `Data tab -> Queries & Connections`.  |
 
-	PIC of POWER QUERY EDITOR  &  PIC OF Advanced editor
-
-|<a id="creating-my-first-query">Creating my first query</a>|
-|:---|
-| Text  |
-
- - __Creating my first query:__ TODO
 
 - __let / in:__
   
@@ -80,6 +75,98 @@ Let's din into some few areas that are core of Power Query and M each followed b
 function_name = (variable) => let body of function in result. The body of the function is like any other query that returns a value.
 - __[Iterations](https://www.data-insights.de/part-3-for-next-loop-using-list-accumulate-in-m-for-power-query/):__ 
 
+
+|<a id="looping-and-iterations">Looping & Iterations</a>|
+|:---|
+|[List.Accumulate()](https://docs.microsoft.com/en-us/powerquery-m/list-accumulate "Documentation for the function") and its 2nd parameter "seed" is of type "any", meaning that this function is not limited to lists objects, but can handle and  return any structured value like: tables, lists or records. En our example we just add a simple number as list element in callback but this technique can be used to perform more complicated iterative tasks on table or records. Function List.Accumulate is very powerful as iterations on sets of lists is big part of Power Query.<br><br> __Example:__ Iterations in M |
+_Just for comparison, in C#, it may looks like this_
+```javascript
+	static List<int> GetList()
+	{
+		// Initial variables
+		int Iterations = 5;
+		List<int> Result = new List<int>();
+
+		// Function to call for each iteration, adds item to a list
+		void AddToList(int elem) { Result.Add(elem); }
+
+		// Iterate using for loop
+		for (int i = 1; i <= Iterations; i++)
+		{
+			AddToList(i);
+		}
+
+		Console.WriteLine(string.Join("\t", Result));
+		return Result;  
+	}
+
+	List `1 2 3 4 5` is returned
+```
+_Iterate in M over another list using List.Accumulate._
+```javascript
+	// Similar thing in M language, iterating over another list
+	let
+		// Initial variables
+		Iterations = {1, 2, 3, 4, 5},
+
+		// Function to call for each iteration, adds item to a list
+		AddToList = (res, i) => List.Combine({res, {i}}),
+
+		// Iterate using function Accumulate(list, seed, accumulator(state, current))
+		Result = List.Accumulate(Iterations, {}, AddToList)
+	in 
+		Result
+
+		List `1 2 3 4 5` is returned
+```
+
+ I think the example above might need some explanation. List.Accumulate is a function that loops through items of a list and calls a provided function for each iteration. Following description of parameters explain how it works. It is a very powerful function - worth understanding! 
+
+ The key here are parameters, specially a bit "special behavior" of parameters in the callback function ("accumulator"):<br> __List.Accumulate( list , seed , accumulator(state, current) )__ 
+
+__list__ - Here we provide a list "iterations" which is {1,2,3,4,5}. Accumulate() calls the callback function (set in 3rd parameter) for each element in this list. As we have in tot 5 elements in the list, then Accumulate() will iterate 5 times meaning function `AddToList` will be called 5 times.
+
+__seed__ - Start value for the very first iteration, the initial "state". As we expect the rest to be a list then we provide empty `list` as input that we later iterations add values to. In first iteration this exact value (empty list) is sent to our callback as "res" (state) parameter. 
+
+__accumulator__ - Our function that that defines what to do for each iteration. It is often called "callback function" as we send it as parameter into another function that later call it. Accumulate() calls it for each iteration. By [definition](https://docs.microsoft.com/en-us/powerquery-m/list-accumulate) it has two required input parameters. First parameter, in documentation, is called "state" and simply is a value return in previous iteration. But for very first iteration there is no previous value. Yes, and here is where the __seed__ value, our start value, comes to use. In our case we provided empty list as initial value so it is provided to callback in first iteration. Second time callback function is called the result from previous run was a list with 1 element, third run it's a list with 2 element, and so on. The second parameter in the callback function, __current__ is simply the current element of the list Accumulate() iterates over. First tie it is element 1, second element 2 an so on.
+
+_Similar thing in M language, using recursiveness_
+```javascript
+	let 
+		// Defining initial variables
+		Iterations = 5,
+
+		// Iterate using recursiveness
+		Iterate = (i) => if (i > 0) then List.Combine({@Result(i-1), {i}}) else {},
+
+		Result = Iterate(Iterations)
+	in
+		Result
+
+		List `1 2 3 4 5` is returned
+```
+In example above we use recursive function. When a function in M calls itself from inside itself then @ parameter must be used when called!
+
+_Finally combining the both M techniques above -auto-create a list to later iterate over with Accumulate() function._
+```javascript
+	
+	// Iterate only by defining number of iterations (here 10000)
+	let
+		Iterations = (i) => if (i > 0) then List.Combine({@Iterations(i-1), {i}}) else {},
+
+		// Function to call for each iteration, adds item to a list
+		AddToList = (res, i) => List.Combine({res, {i}}),
+
+		// Iterate using Accumulate(list, seed, accumulator(state, current)) function
+		Result = List.Accumulate(Iterations(10000), {}, AddToList)
+
+	in
+		Result
+
+		List `1 2 3 4 5 ... 10000` is returned
+
+```
+
 <br>
 
 ### __[Learn from examples]()__
@@ -87,7 +174,7 @@ function_name = (variable) => let body of function in result. The body of the fu
 
 Expression `let` lets us define executable expressions whose results are assigned to variables (steps). Those expressions are can be used to produce a final value that can be returned by `in` expression defined the end of the query.
 
-Example:<br>
+Example: <br>
 __let / in__ and definition of 2 variables and returning its product in a simple query.  
 ```javascript
 let			
@@ -109,57 +196,9 @@ Value `200` is returned in both cases.
 
 <br>
 
-Example:<br> 
-Iteration/looping - 5 times, in each adding "index" value to a list
-```javascript
-
-	// In C# language it looks something like this
-	static List<int> GetList()
-	{
-		// Defining initial variables
-		int index = 0;
-		List<int> list = new List<int>();
-	
-		// Function to call for each iteration that adds elem to list
-		void  AddToList(int elem) { list.Add(elem); }
-
-		// Iterate, loop 
-		while (index < 5)
-		{
-			AddToList(i);
-			index = index + 1;
-		}
-
-		Console.WriteLine(string.Join("\t", list));
-		return list;
-	}
 
 
-	// Same thing in M language
-	let
-		// Defining initial variables
-		index = {0,1,2,3,4},
-		list = {},
 
-		// Function to call for each iteration. Simply adds elem to a list ().
-		AddToList = (prev_result, cur_index) => List.InsertRange(prev_result, List.Count(prev_result), {cur_index}),
-
-		// Iterate, loop 
-		result = List.Accumulate(index, list, AddToList )
-	in 
-		result
-```
-List `0 1 2 3 4` is returned in both cases.
-
-I think the example above (M part) need some explanation for unused eyes. Before you get used to M's way of working, it might seem a bit confusing. The key in example above are the 3 parameters in Accumulate() function and the 2 parameters in the callback function - __List.Accumulate( list , seed , accumulator(state, current)__ _(names as "seed", "state", "current" are used in documentation)_). 
-
-__list__ - Here our variable "index" which is {0,1,2,3,4}. The function we provided in 3rd parameter is called for each element in this list. As we have 5 elements in "index" list, then Accumulate() will iterate 5 times, and function `AddToList` will be called 5 times.
-
-__seed__ - Start value for the first loop or iteration. And it is our empty `list` that we start with and want to fill with values in the iterations. In first iteration this is sent to callback  as "result" - 1st parameter. 
-
-__accumulator__ - This parameter is a function that we must design, in other languages so called "callback function". It is called for each iteration. By definition it has two required input parameters. First parameter, in documentation called "state", is a value from the previous iteration. But.. you think, first time callback function is called, there is not previous value. Yes, and here the __seed__ value, our start value, comes to use. In our case we provided empty list as initial value. Second time callback function is called stback function can beate parameter have changed and in our case is a list with one element. Third run it's a list with 2 element, and so on. The second parameter in the callback function __current__ is the element of the list, in our case "index", and is 0 first iteration, 1 second iteration, 2 third and so on.
-
-__Note!__ [__List.Accumulate()__](https://docs.microsoft.com/en-us/powerquery-m/list-accumulate "Documentation for the function") and its 2nd parameter "seed" is of type "any", meaning that this function is not limited to lists-objects but can return and forward to callback function any structured value like tables, lists or records.  For example "index" list can have other types of elements that will subsequently feed the callback function during iteration. The result from the callback function can be tables, not limited to initial empty list, as in our example. Function List.Accumulate is very powerful as looping an iterations are big part of programing logic.
 
 
 
@@ -219,7 +258,11 @@ in
 
 ## [__What is Power Query__]()
 <p align=right><a align=right href="#table-of-content">↩ Back To Top</a></p>
-'
+
+Power Query allows you to easily discover and connect to data from public and corporate data sources. This includes new data search capabilities to facilitate discovery, as well as capabilities to easily transform and merge data from multiple data sources, so you can analyze the data in Excel.
+
+The Power Query Formula Language (informally known as "M") is a powerful mashup query language optimized for building queries that mashup data. It is a functional, case sensitive language similar to F#. M will likely be the first language that new users actually use although it is unlikely that they are aware of the fact that they are using it. The reason is that when users are importing data into their data model, which is generally the first step in using Power BI Designer, the queries are most likely using M in the background. However, the Query Editor provides a powerful graphical interface that allows users to perform complex data mashups without ever having to look at the M code that the Query Editor is building behind the scenes.
+
 Power Query is a technology created by Microsoft and its core capability are to importing, modifying data from one or more data sources. Power Query is part of Excel and Power BI tools. It is a great tool when it come to collecting, modifying and analyzing big amounts of data.
 
 what data can we import/collect with Power Query?
