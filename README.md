@@ -13,7 +13,7 @@ Prerequisites: If you have never used Data tab in Excel, or do not have any at a
  ► __M in Power Query__
   - [__What is M and why in Power Query?__](#what-is-M-and-why-power-query? "What is M and what is it used in Power Query?")
   - [__M syntax & some Power Query basics__](#m-syntax-with-some-power-query-basics "[M syntax with some Power Query basics") 
-    - [Query](#power-query-e) |  [Power Query Editor](#power-query-editor "Our most frequently used shortcuts") | [let & in](#let-in) | [Steps](#steps-e) | [Tables](#tables-e) | [Lists](#lists-e) | [Records](#records-e)
+    - [Query](#power-query-e) |  [Power Query Editor](#power-query-editor "Our most frequently used shortcuts") | [let & in](#let-in) | [Steps](#steps-e) | [Tables](#tables-e) | [Lists](#lists-e) | [Table operators](#operators-e)
 
 
 
@@ -89,7 +89,20 @@ Value `200` is returned in both cases.
 
 |<a id="tables-e">Tables</a>|
 |:---|
-|Language M and Power Queries are design to work with large data sets usually loaded and represented as [tables](https://ssbi-blog.de/blog/technical-topics-english/tables-in-power-query-how-when-and-why/) i.e. Excel sheets with its columns and rows. Tables are often the final result of a query and are subsequently loaded into the data model in Excel or Power BI. Tables mostly contain columns and rows, but they can be empty which looks like this: `#table({},{})`. More about this important topic later on.  <br><br>|
+|Power Query often work with sets of data represented as [tables](https://ssbi-blog.de/blog/technical-topics-english/tables-in-power-query-how-when-and-why/). Tables are often returned as result of a function, step or query. They are usually loaded into Power Query automatically when data is imported but can defined like this: <br><br> `tblPersons = #table( {"Name", "Age"}, {{"Adam", 26}, {"Ewa", 56}} )` <br><br> We can also create a table from a list or record - [Table.FromList()](https://docs.microsoft.com/en-us/powerquery-m/Table-FromList) or [Table.FromRecords()](https://docs.microsoft.com/en-us/powerquery-m/Table-FromRecords). There are 3 operators that can be used in conjunction with tables: „=“, „<>“ and „&“ (or Table.Combine) to combines tables. |
+- Example: <a id="operators-e">Table operators `=`, `<>` and `&`</a> 
+	```javascript
+		//   Same only: 
+		//   1. Number of columns & rows are same
+		//   2. Column names same (case sensitive)
+		//	 3. Row elements same (case sensitive)
+		//   Note! Column order do not matter!
+		//
+		#table({"A","B"},{{1,2}}) = #table({"B","A"},{{2,1}}) → true
+		#table({"A","B"},{{1,2}}) = #table({"B","A"},{{1,2}}) → false
+		#table({"A","B"},{{1,2}}) = #table({"B","a"},{{2,1}}) → false
+		#table({"A","B"},{{1,2}}) = #table({"B","A"},{{3,1}}) → false
+	```
 
 |<a id="lists-e">Lists</a>|
 |:---|
