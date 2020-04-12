@@ -87,22 +87,109 @@ Value `200` is returned in both cases.
 |:---|
 |Code rows in a query separated by `,`. Each steps represents a variable assignment inside an `let` expression. The ability to change the current step (defined after `in`) makes it easy to debug and view the produced value of a step. <br><br>|
 
+|<a id="functions-e">Functions</a>|
+|:---|
+|Functions can be Assigned to a variable and/or renamed. Renamed like variable_X = Function(a,b), then you can call variable_X(a,b) instead of functionX(a,b). Can be Used as a parameter to another function.we need to distinguish between calling a function (using it in our code) and referring to it function vs function().he syntax to create a function is: <br> function_name = (variable) => let body of function in result. The body of the function is like any other query that returns a value.  <br><br>|
+
+|<a id="each-e">each & "_"</a>|
+|:---|
+|__`__`__ means _any_ variable name. Whenever a name of a variable is not necessary to define, in order to have less to write then `__` can be used. <br><br> Example: Todo <br><br>__`Each`__ is a function definition with one input variable without name `(_) =>`. It is a bit strange, but it is simply created to shorten down writing out "(_) =>". It has not the same functionality as "each" in java or C#! Because functions in M are often passed as input parameters to other functions in order to be called repetitively over sets of data, then word "each" makes sense in this context. <br><br>|
+- __Example__: <a id="explaining-each-e">Explaining each</a> 
+	```javascript
+	let
+		// Define a short list of numbers
+		list = {1, 2, 3, 4},
+		
+		// Define a functions doing something with a number 
+		fnTransformElemVer1 = (listElem) => listElem * 100,
+		funcTransformElemVer2 = each _ * 100,
+
+		result1 = List.Transform(list, fnTransformElemVer1),
+		result2 = List.Transform(list, funcTransformElemVer2),
+
+		// Prove that "each" is same as "(_) =>" 
+		result = if (result1 = result2) then "SAME" else "DIFFER"
+	in
+		result
+	
+	Result returned by the query is "SAME" 
+
+	// Note! Code above is spread over several steps.
+	// It's for explaining purposes. Normally it's a one-liner.
+	// That's the whole purpose of "each" and "_"
+	
+	result = List.Transform({1, 2, 3, 4}, each _ * 100)
+	→  {100, 200, 300, 400}
+	```
+
+
 |<a id="tables-e">Tables</a>|
 |:---|
-|Power Query often work with sets of data represented as [tables](https://ssbi-blog.de/blog/technical-topics-english/tables-in-power-query-how-when-and-why/). Tables are often returned as result of a function, step or query. They are usually loaded into Power Query automatically when data is imported but can defined like this: <br><br> `tblPersons = #table( {"Name", "Age"}, {{"Adam", 26}, {"Ewa", 56}} )` <br><br> We can also create a table from a list or record - [Table.FromList()](https://docs.microsoft.com/en-us/powerquery-m/Table-FromList) or [Table.FromRecords()](https://docs.microsoft.com/en-us/powerquery-m/Table-FromRecords). There are 3 operators that can be used in conjunction with tables: „=“, „<>“ and „&“ (or Table.Combine) to combines tables. |
-- Example: <a id="operators-e">Table operators `=`, `<>` and `&`</a> 
+|Power Query often work with sets of data represented as [tables](https://ssbi-blog.de/blog/technical-topics-english/tables-in-power-query-how-when-and-why/). Those often returned by functions, steps or queries. They are usually loaded into Power Query automatically created when data is imported, but can also be defined manually:<br><br> `tblPersons = #table( {"A","B"} , {{1,"x"},{2,"y"}} )`<br>`tblPersons = Table.FromRows( {{1,"x"},{2,"y"}} , {"A","B"} )`<br><br>`|  A | B |`<br>`|  1 | 2 |`<br>`| x | y |`<br><br> Can also be created functions as [Table.FromList()](https://docs.microsoft.com/en-us/powerquery-m/Table-FromList) or [Table.FromRecords()](https://docs.microsoft.com/en-us/powerquery-m/Table-FromRecords).<br><br>To get column names:<br>`Table.ColumnNames(tblPersons)` → returns a list of all names, here `{"A", "B"}` <br><br> Given a table we can access each row  or a single element:<br> `tblName[colName]` → returns ALL column elements as a list<br> `tblName[colName]{rowIndex}` → returns a single element. Can be anything - int, list, record, function etc.<br><br> There are mainly 3 operators that can be used in conjunction with tables: `=`, `<>` and `&`. Best way to get how it work is learn from following examples:|
+
+There are 2 functions used frequently and we want to go through them more detail as a learning example how to use table functions.
+<br><br> 
+[Table.TransformColumnTypes(tbl, list)](https://docs.microsoft.com/en-us/powerquery-m/table-transformcolumntypes): This function changes the type of one or several columns of the table that provided as first parameter. The result is returned as a NEW modified table. The second parameter is a list of elements with syntax `{"ColName", type X}` - describing what column(s) and what type to change to. Unfortunately most often this column names are __hard-coded__, making the function very sensitive to any future changes in column names. A simple change like "Name"  → "name" in the input data will make this function and whole query fail. There are cases when we can avoid hard-coding column names and this is presented in one of the examples below. 
+<br><br> 
+[Table.TransformColumns(tbl, list, )](https://docs.microsoft.com/en-us/powerquery-m/table-transformcolumns).<br><br> Many table are constructed in similar way so we explain this in more detail. It takes a table we want to transform as first parameter and returned new transformed table. Second parameter is
+
+
+- __Example__: <a id="operators-e">Table operators `=`, `<>` and `&`</a> 
 	```javascript
-		//   Same only: 
-		//   1. Number of columns & rows are same
-		//   2. Column names same (case sensitive)
-		//	 3. Row elements same (case sensitive)
-		//   Note! Column order do not matter!
-		//
-		#table({"A","B"},{{1,2}}) = #table({"B","A"},{{2,1}}) → true
-		#table({"A","B"},{{1,2}}) = #table({"B","A"},{{1,2}}) → false
-		#table({"A","B"},{{1,2}}) = #table({"B","a"},{{2,1}}) → false
-		#table({"A","B"},{{1,2}}) = #table({"B","A"},{{3,1}}) → false
+	| A | B |     
+	| 1 | 2 |
+
+	// Equal =
+	// Note! Column order do not matter!
+	tbl = #table({"A","B"},{{1,2}}) = #table({"A","B"},{{1,2}})  → true
+	tbl = #table({"A","B"},{{1,2}}) = #table({"B","A"},{{2,1}})  → true
+	tbl = #table({"A","B"},{{1,2}}) = #table({"B","A"},{{1,2}})  → false
+	tbl = #table({"A","B"},{{1,2}}) = #table({"a","B"},{{1,2}})  → false
+
+	// Do not equal <>
+	tbl = #table({"A","B"},{{1,2}}) <> #table({"A","B"},{{1,2}})  → false
+
+	// Combine & (same as Table.Combine())
+	tbl = #table({"A"},{{1}}) & #table({"B"},{{2}})  → #table({"A","B"},{{1,2})
+	tbl = #table({"A","B"},{{1,2}}) & #table({"A", "b"},{{3,4}})  → #table({"A","B","b"},{{1,2, null},{3,null,4}})
+
+	In the last example column names "B" and "b" mismatch therefore extra column added!
 	```
+
+- __Example__: <a id="accessing-e">Accessing row or single element in a table</a> 
+	```javascript
+	// Accessing a row in a table
+	// TableName[ColumnName] → the result is a list of elements
+	#table({"A","B"},{{1,"x"},{2,"y"}})[A] → a list {1, 2}
+	#table({"A","B"},{{1,"x"},{2,"y"}})[B] → a list {"x", "y"}
+
+	// Accessing a single cell in a table
+	// TableName[ColumnName]{RowIndex} → the result is whatever in element
+	| A | B |
+	| 1 | 3 |
+	| 2 | 4 | 
+	#table({"A","B"},{{1,3},{2,4}}){1}[B] → value 4
+	```
+- Example: <a id="dynamically-change-type-e">Force all table column to one type</a><br>
+	_When changing type on a column through Power Query UI the auto-generated M code used hard-coded column names. If the column header naming  in the future data imports changes, our query stops working. There exist a more dynamic way of accessing columns._
+	```javascript
+		TODO
+	```
+
+- Example: <a id="accessing-e">Capitalizing header texts in a table</a> 
+	```javascript
+	| name | aGe |  <- tblPersons
+	| Anna | 22  |
+	| Carl | 56  | 
+
+	let
+		tblPersons = #table({"name", "aGe"}, {{"anna",22},{"carl",56}}),
+		result = tblPersons
+		TODO
+	in
+		return
+	```
+
 
 |<a id="lists-e">Lists</a>|
 |:---|
@@ -112,14 +199,7 @@ Value `200` is returned in both cases.
 |:---|
 |[Records]((https://ssbi-blog.de/blog/technical-topics-english/records-in-power-query-how-when-and-why/) be described as „a set of fields“. A field is a name/value pair where the name is a text value that is unique within the field’s record. An example of a very simple  record is `[A=1, B=2]`. Records can be empty, which looks like this `[]`. It's rare for a record to be loaded into the data model in Excel or Power BI, but if done it behaves like a table.  <br><br>|
 
-|<a id="functions-e">Functions</a>|
-|:---|
-|Functions can be Assigned to a variable and/or renamed. Renamed like variable_X = Function(a,b), then you can call variable_X(a,b) instead of functionX(a,b). Can be Used as a parameter to another function.we need to distinguish between calling a function (using it in our code) and referring to it function vs function().he syntax to create a function is: <br> function_name = (variable) => let body of function in result. The body of the function is like any other query that returns a value.  <br><br>|
 
-
-|<a id="each-e">each & "_"</a>|
-|:---|
-|`Each` is useful when combined with the lookup operator  <br><br>|
 
 
 |<a id="looping-and-iterations">Looping & Iterations</a>|
@@ -130,16 +210,16 @@ _Just for comparison, in C#, it may looks like this_
 	static List<int> GetList()
 	{
 		// Initial variables
-		int Iterations = 5;
+		int NbrOfIterations = 5;
 		List<int> Result = new List<int>();
 
 		// Function to call for each iteration, adds item to a list
-		void AddToList(int elem) { Result.Add(elem); }
+		void AddToList(List<int> res, int i) { res.Add(i); }
 
 		// Iterate using for loop
-		for (int i = 1; i <= Iterations; i++)
+		for (int i = 1; i <= NbrOfIterations; i++)
 		{
-			AddToList(i);
+			AddToList(Result, i);
 		}
 
 		Console.WriteLine(string.Join("\t", Result));
