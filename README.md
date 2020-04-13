@@ -1,17 +1,19 @@
-## ___M Formula Language in Power Query - The Cheat Sheet___
+## ___M&nbsp;used&nbsp;in&nbsp;Power&nbsp;Query - The&nbsp;Cheat&nbsp;Sheet___
 ---
-#### By&nbsp;___Martin&nbsp;Czerwinski___ &nbsp;March&nbsp;2020&nbsp;®&nbsp;[__CMQ__&nbsp;Nordic&nbsp;AB](www.cmq.se "www.cmq.se (Martin Czerwinski @ CMQ Nordic AB)")
+__By&nbsp;Martin&nbsp;Czerwinski__ [CMQ&nbsp;Nordic&nbsp;AB](www.cmq.se "www.cmq.se (Martin Czerwinski @ CMQ Nordic AB)")®&nbsp;March&nbsp;2020&nbsp;
 
 ---
-What is the M Formula language? What is the syntax and structure of M and how to work with with it in Power Query? This is an compact tutorial, or a cheat sheet to look up things in - that will give you answer to all that questions and more! Please bookmark this page and __share it__. Feel free to [reach out to](www.cmq.se "Contact us!") us with questions, comments or requests. You can also hire us for assignments.
+What is the M Formula language? How does it work with Power Query? What is the syntax and structure of M language?<br>
 
-Prerequisites: If you have never used Data tab in Excel, or do not have any at all skills in any programing languages - then this article could be hard for you to follow. We first get familiar with __THIS__ and __THIS__.
+This is a compact tutorial, or a cheat sheet to look up things in for M language and how to use it in Power Query! Bookmark this page, share it and feel free to [reach out to us](www.cmq.se "Contact us!") with questions or comments. You can also hire us for assignments!
+
+_Prerequisites: Some excel & programing skills._
 
 ---
 
 #### __TABLE OF CONTENT__
  ► __M in Power Query__
-  - [__What is M and why in Power Query?__](#what-is-M-and-why-power-query? "What is M and what is it used in Power Query?")
+  - [__What is M?__](#what-is-M? "What is M and what is Power Query?")
   - [__M syntax & some Power Query basics__](#m-syntax-with-some-power-query-basics "[M syntax with some Power Query basics") 
     - [Query](#power-query-e) |  [Power Query Editor](#power-query-editor "Our most frequently used shortcuts") | [let & in](#let-in) | [Steps](#steps-e) | [Tables](#tables-e) | [Lists](#lists-e) | [Table operators](#operators-e)
 
@@ -26,21 +28,16 @@ Prerequisites: If you have never used Data tab in Excel, or do not have any at a
 - [__Clickable UI functions__](#power-query-editor "Clickable UI functions Query Editor") 
    - [Other tools](#m-language "Power Query Editor in other tools") | [Other tools](#m-language "Power Query Editor in other tools") | [Other tools](#m-language "Power Query Editor in other tools") | [Other tools](#m-language "Power Query Editor in other tools")
 
-
-<br>
-
 ---
 
 <section>
 
-## [__What is M and why Power Query?__]()
+## [__What is M?__]()
 <p align=right><a align=right href="#table-of-content">↩ Back To Top</a></p>
 
- "M" stands for "mash up" and is a script language created by Microsoft for usage in their [Power Query tools](#what-is-power-query?) designed to build queries that mashup data. It is similar to [F-Sharp](https://en.wikipedia.org/wiki/F_Sharp_(programming_language)) language. What is data "mashup"? This term is used to describe the action of combining and modifying collected data to create a personalized high-value product for distribution or personal consumption. The core capability of Power Query is to mashup data and its M scripting Language is used for this purpose.
+ "__M__" stands for "mashup" and is a script language created by Microsoft for usage in their [Power Query tools](#what-is-power-query?) designed to build queries that "mashup" data. It is very similar to [F-Sharp](https://en.wikipedia.org/wiki/F_Sharp_(programming_language)) language. What is data "mashup"? This term is used to describe the action of combining and modifying collected data to create a personalized data set. The core capability of Power Query is to mashup data using M scripting language.
 
-We instantly fell in love with Power Query after seeing how it can easily import and transform data in ways Excel finds difficult, and how it can automate repetitive workflows!
-
-You can do a lot in Power Query Editor by clicking and drag-and-dropping in the UI, without writing any single line of code, but sometimes you might need to dig and modify the automated M code or write new functionalities. Therefore we recommend to understand at least the basics of the syntax of this language. It also makes it possible to create more complicated actions than those limited to click-and-drag in Power Query Editor UI.
+We instantly fell in love with Power Query after seeing how it can easily import and transform data in ways Excel finds difficult, and how it can automate repetitive workflows! You can do a lot in Power Query Editor by clicking and drag-and-dropping in the UI, without writing any single line of code, but at some point you might need to dig and modify the auto-generated M code or write your own functions. Therefore we recommend to understand at least the basics of the syntax of M. It also makes it possible to create more complicated actions than those limited to click-and-drag in Power Query Editor UI.
 
 <br>
 <article>
@@ -170,13 +167,13 @@ There are 2 functions used frequently and we want to go through them more detail
 	| 2 | 4 | 
 	#table({"A","B"},{{1,3},{2,4}}){1}[B] → value 4
 	```
-- Example: <a id="dynamically-change-type-e">Force all table column to one type</a><br>
+- Example: <a id="dynamically-change-type-e" href="https://community.powerbi.com/t5/Desktop/Power-Query-M-Change-proper-case-for-first-row-of-the-table/td-p/318711">Dynamically change all table column to one typ</a><br>
 	_When changing type on a column through Power Query UI the auto-generated M code used hard-coded column names. If the column header naming  in the future data imports changes, our query stops working. There exist a more dynamic way of accessing columns._
 	```javascript
 		TODO
 	```
 
-- Example: <a id="accessing-e">Capitalizing header texts in a table</a> 
+- Example: <a id="accessing-e" href="https://www.thebiccountant.com/2017/01/09/dynamic-bulk-type-transformation-in-power-query-power-bi-and-m/">Capitalizing header texts in a table</a> 
 	```javascript
 	| name | aGe |  <- tblPersons
 	| Anna | 22  |
