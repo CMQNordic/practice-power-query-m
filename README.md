@@ -19,16 +19,17 @@ _Prerequisites: Some excel & programing skills._
 
   - [__Basics to know__](#basics-to-know) 
     - [Why M?](#why-m-in-m)
-    - [Basic syntax](#basics-syntax-of-m) ◦ [Power Query editor](#power-query-editor-in-m)<br>  
-	- [Get data into a query](#get-data-into-the-query-in-m) ◦ [Data sources](#data-sources-in-m)<br> 
-	- [About functions](#functions-in-m) ◦ [Each &  __](#each-in-m) ◦ [Errors](#errors-in-m) 
+    - [Power Query Editor](#power-query-editor-in-m) ◦ [Basics of M](#basics-of-m)<br>  
+	- [Import data into a query](#import-data-into-a-query-in-m) ◦ [Types in M](#types-values-in-m)<br> 
+	- [Functions in M](#functions-in-m) ◦ [Each &  __](#each-in-m) ◦ [Errors](#errors-in-m) 
 	- [Lists](#lists-in-m) ◦ [Records](#records-in-m) ◦ [Tables](#tables-in-m) ◦ [Accessing values](#accessing-values-in-m)<br> 
-    - [Types](#access-values-in-m) ◦ [Operators and Expressions](#operators-in-m) <br>
-	- [Some useful native functions to know](#native-functions-in-m)<br> 
-	- [Things to avoid](#lists-e)<br>
+    - [Operators and Expressions](#operators-in-m)<br>
+	- [Step execution order](#step-execution-order-in-m) ◦ [Measuring performance](#measuring-performance-in-m)<br>
+	- [Useful Native Functions to know](#useful-native-functions-in-m)<br> 
+	- [Things to avoid](#things-to-avoid-in-m)<br>
  
  - [__Learn from examples__](#m-syntax-and-main-functionality "[M syntax with some Power Query basics") 
-	- [Example: import data](#data-sources) - Example of importing data from various data sources
+	- [Import of data example](#examples-of-data-import-in-m) - Some M functions that import data
 	- [Example: functions](#functions-e) - Example of definition of functions
   	- [Example: lists](#list-syntax-example-in-m) - Example of using list
     - [Example: read values](#accessing-values-in-m) - How to access values
@@ -66,97 +67,149 @@ M is a script language created by Microsoft for usage in their [Power Query toot
 
 With Power Query is is very easy to import and transform data in ways Excel finds difficult. There are importing functionality and connections to external sources that can automate lots of repetitive workflows! You can do a lot in Power Query in its Editor by selecting and clicking in the UI, without writing any single line of code, but at some point you might need to dig and modify the auto-generated M code or write your own M functions. Therefore we recommend to understand at least the basics of the syntax of M. 
 
-<p align=right><a id="basics-syntax-of-m" align=right href="#table-of-content">↩ Back To Top</a></p>
-
-#### [Basics syntax]()
----
-Open the Advanced Editor that is part of both Excel and Power BI and you will see `let` `in` expressions. Between `let` and `in` we declare variables and write M code as steps. Final result is defined in the end after `in` expression and that is what is returned from the script. A let/in expression is a block that produces a value and can be used wherever values are expected. This means we can assign such a block to variables, nest them inside other let expressions, and use them to produce values for function call arguments.
-
- Each __step__ is a variable declaration that execute some code and must be ended by `,` character. A step can be on own its line but does not have to. Variable names can be without spaces or consist of several words with spaces in between but then must be within ` #""`. 
-
-In Power Query editor you can usually click on buttons that auto-create steps (variable=some expression doing something,). The names created are usually short sentences describing what the step is doing. This is not very practical and normal when you write M code by yourself. Then, as in most programing languages, variable names are shorter one worded expressions that are easy to identify and relate to looking at the code. Therefor the auto-generated code is not very easy to read cause of many #"" due to white spaces and many words.
-
-Main object that we mostly work with in Power Query are Tables, List and records. More details about those later.
-
-```javascript
-let
-  varA = "Hello",
-  #"var B" = "World",
-  ConcatenatedText = varA & " " & #"var B",
-  Result = Text.Combine({ConcatenatedText, "!"})
-in
-  Result  
-  
-  → Hello World!
-```
-
-```javascript
-// Assign let - in block to a variable that is returned
-let	
-	Result = let			
-				A = 10,
-				B = 20
-			 in
-				A * B
-in
-	Result
-
-→ 200
-```	
 
 <p align=right><a id="power-query-editor-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
 
-#### [Power Query editor]()
+#### [Power Query Editor]()
 ---
 
-Power Query Editor is a graphical M script editor and part of  [Excel](https://support.office.com/en-us/article/getting-started-with-power-query-7104fbee-9e62-4cb9-a02e-5bfb1a6c536a "Getting Started with Power Query in Excel") and [Power BI](https://powerbi.microsoft.com/en-us/blog/getting-started-with-power-query-part-i/ "Getting Started with Power Query in Power BI"). It's used for working with M through its graphical interface that present M code as clickable list of steps. It is designed to be used by persons without any coding experience. In Excel the Power Query Editor can be launched by clicking on existing query in list of queries, launched from `Data tab -> Queries & Connections` or by importing data to from  `Data tab -> Get data`.
+Power Query Editor is a graphical script editor and part of [Excel](https://support.office.com/en-us/article/getting-started-with-power-query-7104fbee-9e62-4cb9-a02e-5bfb1a6c536a "Getting Started with Power Query in Excel") and [Power BI](https://powerbi.microsoft.com/en-us/blog/getting-started-with-power-query-part-i/ "Getting Started with Power Query in Power BI"). It's used for working with M through its graphical interface that present M code as clickable list of steps. It is designed to be used by persons without any coding experience, hiding the M code building up the query from users. But in Power Query editor you can open Advanced Editor ` View -> Advanced Editor` where M code can be written or modified on your own. Advanced Editor is a simple but fully functional textual editor for M code.
 
-From Power Query editor you can open Advanced Editor ` View -> Advanced Editor` where M code can be written or modified.
+ In Excel the Power Query Editor can be launched in several ways:<br> 
+ - Launch it manually from `Data tab → Get Data → Launch Power query Editor...`
+ - Launch by importing any data to from  `Data tab → Get & Transform Data` section.
+ - Launch by clicking on existing query in List-Of-Queries found in `Data tab → Queries & Connections` 
 
 
-<p align=right><a id="get-data-into-the-query-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
+<p align=right><a id="basics-of-m" align=right href="#table-of-content">↩ Back To Top</a></p>
 
-#### [Get data into a query]()
+#### [Basics of M]()
+---
+When you open any Power Query editor the first thing you will see is an `let` `in` expression and probably lots of text lines beginning with short words like `#"Source"` or `#"changed Types"`. In the area _between_ `let` and `in`, on each line we declare one variable followed by `=` and an expression that perform some action or actions. Each of this lines (that end with an `,` character) in M is called __a step__. Final result returned by query is defined in the end _after_ `in` expression. A _let/in_ expression is a block that produces a value like table, list, number or text and can be used wherever values are expected. This means we can assign such a block to variables, nest them inside other let/in expressions.
+
+```javascript
+// Comment - a simple let/in block
+let
+  VariableA = "Hello",
+  #"Variable B" = "World",
+  SimpleText = VariableA & " " & #"Variable B",
+  Result = Text.Combine({SimpleText, "!"})
+in
+  Result  
+  
+
+ → Hello World!
+```
+
+```javascript
+// Nested let/in block assigned to variable
+let	
+	NestedBlock = let			
+					A = 10,
+					B = 20
+				 in
+					A * B,
+
+	Result = NestedBlock
+in
+	Result
+
+
+→ 200
+```
+_ Each step is a variable declaration that execute some code and must be ended by `,`. A step can be on own its line but does not have to. Variable names can be without spaces or consist of short sentences with spaces in between words but must then be within ` #""` brackets. _
+
+Users of Power Query that don't have any M knowledge usually click on buttons that auto-create steps through the graphical interface of Power Query Editor. The step are then created and named automatically. This is not very practical if you write M code by yourself. In most programing languages, variable names are shorter one worded expressions that are easy to identify and relate to by looking at the code. But since Power Query is designed for people without any M skills, that will not modify M code on their own therefore the auto-generated names are are descriptive sentences instead of short one-worded names. In example in this documents we edit and add code though Advanced Editor and we use Short one worded step names in order to make the code be more readable and tidy.
+
+When looking at a query you might think that steps are evaluated in sequential order as they appear in the query. This is NOT the case though. Power Query evaluates steps only when needed for final result   and in any order is chooses to be most efficient. This is called programing world for _lazy evaluation_.  If output from a step is not needed to produce the final result value that is returned by `in` then such a step may not be evaluated at all.
+
+```javascript
+let	
+	A = 10,
+	B = "I'm here",  // This step is never used
+	C = 20,
+	Result = A*C
+in
+	Result
+
+
+→ 200
+```
+
+Power query is designed to handle and modify big amount of tabular repetitive data. Due to that main objects that we mostly work with in Power Query are Tables, List and Records. Of course variable of type like integer, text do exist and are used in the scrip flow. But main native functions as well as the results of steps or the query itself most often is of type Table or List. Therefore understanding what table and list is in Power Query is essential first thing to do when learning M.
+
+The gasoline for Power Query "engine" is data - therefore importing of data functionality is a big part of Power Query. Thats why each query normally starts with step named "Source" that first-of-all imports the data into the query.
+
+
+<p align=right><a id="import-data-into-a-query-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
+
+#### [Import data into a query]()
 ---
 
-At least some query M code is auto-created by Power Query when you import data into your into Power Query and  create a connection to the source of that data. In Excel it is done from `Data -> Get & Transform data` section. Most basic data import to Power Query is from a table or range in current Excel worksheet - `Get Data -> From Other Sources -> From Table/Range`. Then Power Query automatically launches and auto-creates an M query named same as the imported table. In the created query data is loaded to first variable (first step) usually automatically named to `source`. You can later by opening the Power Query Advanced Editor further work on and modify this query to your needs.<br><br> Data loaded to power Query can come from sources like [tables/ranges/constants](https://support.office.com/en-us/article/define-and-use-names-in-formulas-4d0f13ac-53b7-422e-afd2-abd7ff379c64) in current Excel document, from web addresses, from other excel or cvs files, from facebook, azure, databases etc.  
+Power Query comes with a build-in intuitive functionality to automatically connect and import data from various sources. You can import data from a table in same document you are in, other excel documents, files like PDF or CSV on your hard-drive or connect to web addresses or external databases. More about this can be read [here](https://support.office.com/en-us/article/define-and-use-names-in-formulas-4d0f13ac-53b7-422e-afd2-abd7ff379c64). Microsoft is constantly adding and improving connections to various sources that users might need data from. In Excel data importing options can be found in `Data -> Get & Transform data` section. In Power BI in [TODO](TODO).
 
-Read more about how to do it in this good tutorial [here](TODO).
+__Example of a basic data import to a query from Excel table/range in current workbook.__<br> In your opened excel workbook click on a cell or select section containing data that you would like to import into a query - `Get Data -> Get & Transform data -> From Table/Range`. At current moment (2020) Excel need the data to be imported from a _[table](https://support.office.com/en-us/article/overview-of-excel-tables-7ab0bb7d-3a9e-4b56-a3c9-6c94334e492c)_ and if the cell/range you have selected is not recognized by Excel as a table then it will launch wizard to navigate you through converting you selected range to a table Is described more deeply [here](TODO). Afterward Power Query Editor launches and auto-generates a new query that imports your selected data. In this new query data is loaded in first variable (called step) usually named `Source`. Second step that Power Query used to add in most import cases is "_auto detection of column types_". This step is usually named `Changed Type`. Sometimes its intelligent guess of what are the types of elements in the columns types is might not be fully correct and needs your attention to change column-by-column manually. Also this step cam be safely removed. You can now in the opened Power Query Advanced Editor further work on and modify data in this query according to your needs. When done click `Close & Load` button and load the query into your workbook. Power query will ask where to place the data. It always places the data in Excel worksheets as a table in a predefined default template style. 
 
-<br><p align=right><a id="data-sources-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
+Read more details on how to import from other sources in this good tutorial [here](TODO).
 
-#### [Data sources]()
----
-__From current workbook__: tables and names ranges as _tables_
+_<a id="examples-of-data-import-in-m">Examples:</a> Some M functions that import data._
+
+__From current worksheet.__ _Tables_ and _Named Ranges_ from your current workbook.
 ```javascript
 // Import all objects in current Excel workbook to Power Query as a table. Tables, Sheets and Named Ranges defined in workbook will each one reside one row in this table.
 TableWithObjects = Excel.CurrentWorkbook()
 
 
-
 ```
 
-__From local folder__: all files as _tables_
+__From local folder.__: List of _Files_ with _Attributes_ in a specific local location.
 ```javascript
 // Import all files from a specific folder and sub-folders.
 TableWithFiles = Folder.Files("C:\Users\marti\Favorites")
 
 
-
 ```
 
-__From Web page__: HTML as _tables_
+__From Web-page__: HTML presented as _Tables_
 ```javascript
 // Import HTML web page represented as tables
 TableWithWabPage = Web.Page(Web.Contents("https://www.timeanddate.com/"))
 
 
-
 ```
+
+<br><p align=right><a id="types-values-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
+
+#### [Types in M]()
+---
+Every step, variable, field or column in Power Query script must have a specific Data Type associated to it. For example in excel "1" set as text or 1 set as number show differently (on different side in column) in GUI. Below we list some most common types used in Power Query.
+
+More detailed description about types can be found in the blog [here](https://www.poweredsolutions.co/2018/03/12/data-types-data-conversion-ascribed-data-types-power-query-power-bi/). 
+
+
+||||
+---|---|---
+Type number | 1 or 1,2
+Type text | "a", "1" or "two words"
+Type logical | true or false
+Tape table | #table({},{})  → _empty table_
+Type list | {1,2}
+Type record | [A=1, B=2]
+Type function | ???
+datetime | ??
+Type date | ??
+Type time | ??
+Type duration | ??
+Type binary | usually a file
+Type nullable | a file
+
+##### What is `nullable`
+For any Type T, a nullable variant can be derived by using 
 
 <br><p align=right><a id="functions-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
 
-#### [About functions]()
+
+#### [Functions in M]()
 ---
 
 In Power Query function is a mapping from a set of input values to a single output value. Functions are defined by `(param) => "body returning value"`, function body follows the goes-to (=>). A function can later be assigned to a variable, i.e. X = FunctionA - then you can execute it by calling X(e) instead of functionA(e). Functions be used as a parameters to another functions. We need to distinguish between invoking a function and referring to it. When assigned to a parameter or passed as parameter to other function we do not write out () nor the parameters - just the function name. The type of input parameter(s) and the type of value that the function returns can be defined but is optional. `() => 1+2` is a valid simple _unnamed_ function returning value 3.
@@ -283,7 +336,7 @@ A _list_ can be described as _an ordered sequence of values of any type_. It is 
 
  Records can be empty - defined like this `{}`. Operators `=` and `<>` make it possible to compare lists, while `&` combines lists. List are easy and fast to iterate (loop) over.
 
-_<a id="list-example-in-m">Example:</a> list example_
+_<a id="list-example-in-m">Example:</a> List example_
 ```
 Define   →  L = {"a", 24} 
 Get value   →  L{0}  →  a
@@ -567,26 +620,6 @@ L{1} → error
 L{1}? → null
 ```
 
-<br><p align=right><a id="access-values-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
-
-#### [Types]()
----
-
-||||
----|---|---
-number | Type | 1 or 1,2
-text | Type | "a" or "ewa"
-logical | Type | true or false
-function | Type | List.Transform
-binary | Type | a file
-list | Type | {1,2}
-record | Type | [A=1, B=2]
-table | Type | #table() TODO
-time | Type | time values
-date | Type | date values
-datetime | Type | datetime values
-duration | Type | duration values
-
 <br><p align=right><a id="operators-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
 
 #### [Operators and Expressions]()
@@ -630,25 +663,68 @@ x = y | Equal | →  `true` or `false`
 |Records| `[a=1] & [b=2,c=3]` |  `[a=1,b=2,c=3]` |
 |Tables|` #table({"A"},{{1}}) & #table({"B"},{{2}})` | ` #table({"A","B"},{{1},{2}})` |
 
+<br><p align=right><a id="step-execution-order-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
 
-<br><p align=right><a id="skip-code-execution-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
-
-### [Skipping code execution with if/esle]()
+### [Step execution order]()
 ---
 
-
+__TODO - Write a bit more__
 step1 = do something fast
-
 step2 = do something bit time consuming
-
 step3 = do something more time consuming
 
-result = if step1<>null then step1 else if step2<>null then step2 else  step3
+Result = if step1<>null then step1 else if step2<>null then step2 else  step3
 Play around with setting step1/2/3 to null and measuring execution time.
 
 This is a technique to avoid executing steps in vain
 
-__TODO__
+```
+
+
+
+```
+<br><p align=right><a id="measuring-performance-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
+
+### [Measuring performance]()
+---
+
+__TODO - Write something about performance__
+
+
+```
+
+
+
+```
+
+<br><p align=right><a id="useful-native-functions-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
+
+### [Useful native Functions in M]()
+---
+
+__TODO - Add about functions__
+
+
+```
+
+
+
+```
+
+
+<br><p align=right><a id="things-to-avoid-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
+
+### [Things to avois]()
+---
+
+__TODO - Write more about what to avoid__
+
+
+```
+
+
+
+```
 
 
 <p align=right><a id="reshape-a-table-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
