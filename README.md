@@ -1,5 +1,5 @@
 
-## ___Power&nbsp;Query&nbsp;M&nbsp;language -&nbsp;Dev&nbsp;Reference&nbsp;Guide&nbsp;-___
+## ___Power&nbsp;Query&nbsp;M&nbsp;language -&nbsp;Ultimate&nbsp;Reference&nbsp;Guide&nbsp;-___
 ---
 By&nbsp;Martin&nbsp;Czerwinski [CMQ&nbsp;Nordic&nbsp;AB](www.cmq.se "www.cmq.se (Martin Czerwinski @ CMQ Nordic AB)")®&nbsp;March&nbsp;2020&nbsp;
 
@@ -7,7 +7,7 @@ By&nbsp;Martin&nbsp;Czerwinski [CMQ&nbsp;Nordic&nbsp;AB](www.cmq.se "www.cmq.se 
 
 __M__ is the powerful language behind __Power Query__ helping to import, change and restructure big amounts of data. It's hidden behind the graphical interface of __Power Query Editor__ that is designed for "non-programmers". We still recommend to spend some time to understand the M syntax and how M works. There are many powerful operations to perform with M that you are not able of doing through its graphical interface.
 
-This is __compact tutorial__ and an __reference guide__ that explains basics of M, its syntax and though some advanced examples gives you deep understanding to solution of some problems that every Power Query developer (Excel or Bower BI) at some point get stuck with. 
+This is __compact tutorial__, an __reference guide__ or a __cheat-sheet__ that explains basics of M, its syntax and through some advanced examples gives you deep understanding and solution to some problems that every Power Query developer at some point get stuck with. 
 
 Bookmark this page, share it and feel free to [__reach out to us__](www.cmq.se "Contact us!") with questions, comments or requests for assignments!
 
@@ -21,11 +21,11 @@ _Prerequisites: Some excel & programing skills._
     - [Why M?](#why-m-in-m)
     - [Power Query Editor](#power-query-editor-in-m) ◦ [Basics of M](#basics-of-m)<br>  
 	- [Import data into a query](#import-data-into-a-query-in-m) ◦ [Types in M](#types-values-in-m)<br> 
-	- [Functions in M](#functions-in-m) ◦ [Each &  __](#each-in-m) ◦ [Errors](#errors-in-m) 
+	- [Functions in M](#functions-in-m) ◦ [Each &  _](#each-in-m) ◦ [Handle errors](#handle-errors-in-m) 
 	- [Lists](#lists-in-m) ◦ [Records](#records-in-m) ◦ [Tables](#tables-in-m) ◦ [Accessing values](#accessing-values-in-m)<br> 
-    - [Operators and Expressions](#operators-in-m)<br>
+    - [Operators and Expressions in M](#operators-in-m)<br>
 	- [Step execution order](#step-execution-order-in-m) ◦ [Measuring performance](#measuring-performance-in-m)<br>
-	- [Useful Native Functions to know](#useful-native-functions-in-m)<br> 
+	- [Useful native functions](#useful-native-functions-in-m)<br> 
 	- [Things to avoid](#things-to-avoid-in-m)<br>
  
  - [__Learn from examples__](#m-syntax-and-main-functionality "[M syntax with some Power Query basics") 
@@ -55,7 +55,9 @@ _Prerequisites: Some excel & programing skills._
 ### __[Basics to know]()__
 
 
-Let's go though core and basic areas of Power Query M language, some commonly used expressions and dig into few solutions that we thing might be very beneficial for you to understand. We start with basics and move forward with more advanced stuff.
+Let's go though core and basic areas of Power Query M language, some commonly used expressions and dig into few solutions that we think are very beneficial to all M developers to understand. We start with basics and move forward with more and more advanced stuff.
+
+Official [Power Query M language specification](https://docs.microsoft.com/en-gb/powerquery-m/power-query-m-language-specification) 
 
 <p align=right><a id="why-m-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
 
@@ -201,10 +203,17 @@ Type date | ??
 Type time | ??
 Type duration | ??
 Type binary | usually a file
-Type nullable | a file
+Type nullable | ???
 
-##### What is `nullable`
-For any Type T, a nullable variant can be derived by using 
+##### What do `nullable` mean in Power Query M?
+So what does it mean that a type is nullable and how does it affect us? If you do ever compare `null` value with any other value by a relational operator (<, >, <=, >=) then the result of comparison is not the logical value as you might expect but the null itself. Also then Value compared in if-statement is `null` then error is thrown:<br> `if null < 5 then "A" else "B"` → error.
+
+Therefor you can cast a type that usually is not null to a type that can contain null. Type number is not nullable by default therefore `if null < 5` fails. If 5 here was defined as `type nullable number` then it would not fail.
+
+When a column is of type nullable number or a input parameter to a function is type nullable number then we implicitly tell that this number can be null and telling Power Query not throwing error it it happens.
+
+__TODO investigate/understand/test this more and describe better..__
+
 
 <br><p align=right><a id="functions-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
 
@@ -248,7 +257,7 @@ in
 
 <br><p align=right><a id="each-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
 
-#### [`Each` & `__`]()
+#### [`Each`]() & [`_`]()
 ---
 
 Expression __`each`__ is a _function definition_ with one input variable without name nor type. It is simple _the abbreviation_ for __`(_) =>`__. It has not the same functionality nor meaning as "each" in java or C#. In M "conditional functions" are functions returning type logical (true or false). Those functions very often passed as input parameters to other functions in order to be called repetitively over sets of data (list elements, table rows or record elements ). Then word "each" makes sense in this context when defining those "conditional functions".
@@ -316,9 +325,9 @@ result = Table.SelectRows(#table({"Age","Name"},{{18,"Anna"},{68,"Ewa"}}), each 
 Returns →  #table({"Age", "Name"}, {{18,"Anna"}} )  (Ewa, over 23 was row removed)
 ```
 
-<br><p align=right><a id="errors-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
+<br><p align=right><a id="handle-errors-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
 
-#### [Errors]()
+#### [Handle errors]()
 ---
 __TODO__. Write about error and error handling
 
@@ -427,7 +436,7 @@ It's important to understand that in Power Query M rows of a table are represent
 
 _<a id="record-example-in-m">Example:</a> Example showing how to refer to elements ina table "T"_
 ```
-Define → T = #table({"A","B"},{{1,2},{2,4}}) 
+Define → T = #table({"A"=number,"B"=number},{{1,2},{2,4}}) 
 Define → T = Table.FromRows({{1,2},{2,4}},{"A","B"})
 
  T[A] = {1,2}
@@ -622,7 +631,7 @@ L{1}? → null
 
 <br><p align=right><a id="operators-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
 
-#### [Operators and Expressions]()
+#### [Operators and Expressions in M]()
 ---
 
 Note in bellow list that meaning of an operator can vary depending on the type of operands. Full list of operators can be found [here](https://docs.microsoft.com/en-us/powerquery-m/operators).
@@ -699,7 +708,7 @@ __TODO - Write something about performance__
 
 <br><p align=right><a id="useful-native-functions-in-m" align=right href="#table-of-content">↩ Back To Top</a></p>
 
-### [Useful native Functions in M]()
+### [Useful native functions]()
 ---
 
 __TODO - Add about functions__

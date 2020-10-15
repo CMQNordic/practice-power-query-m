@@ -1,7 +1,7 @@
 -----
 List of Tables
 
-Table1 : Id Name Age
+Table1 : Id Name Age xxx
 Table2 : ID NAME AGE
 Tacle3 : id Gender
 
